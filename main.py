@@ -16,6 +16,7 @@ def transform(content,sourse,destination):#蜕变关系
     return
 
 def translate(content,sourse,destination):#翻译
+    
     return
 
 def analyse():#结果对比分析
