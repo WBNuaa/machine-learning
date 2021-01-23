@@ -1,18 +1,18 @@
 import similarity as si
 import translate as tr
-
+import time
 #语种
 
 ##俄语 ru
 #希腊语 el
 ##英语 en
 ##中文 zh
-##苗语 hmn
+##波兰语 pl
 ##葡萄牙语 pt
 ##泰语 th
 ##德语 de
 
-language = ['zh','en','ru','el','hmn','pt','th','de']
+language = ['zh','en','ru','el','pl','pt','th','de']
 software = ['baidu','youdao','google']
 
 def sample(sourse,destination,layer):
@@ -92,6 +92,7 @@ def transform(content,target,sourse,destination,transform_relationship,layer):
 def translate(content,sourse,destination,tool):
     if tool == 'baidu':
         result = tr.translate_baidu(content,sourse,destination)
+        time.sleep(1)#降低访问频率
     elif tool == 'youdao':
         result = tr.translate_youdao(content,sourse,destination)
     else:
@@ -105,8 +106,8 @@ if __name__ =='__main__':
     content = "我喜欢你" #翻译内容
     sourse = 'zh' #源语言
     destination = 'en' #目标语言
-    target = 'google' #测试系统
-    transform_relationship = 'google' #蜕变关系
+    target = 'baidu' #测试系统
+    transform_relationship = 'baidu' #蜕变关系
     layer = 2 #蜕变层数
     transform(content,target,sourse,destination,transform_relationship,layer)
 
