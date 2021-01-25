@@ -18,7 +18,8 @@ software = ['baidu','youdao','google']
 def sample(sourse,destination,layer):
     #测试用例生成（语种的选择）
     info = {}
-    list = []   #蜕变语种
+    case = []   #蜕变语种
+    result1 = []
     #info['target'] = target
     info['sourse'] = sourse
     info['destination'] = destination
@@ -27,14 +28,22 @@ def sample(sourse,destination,layer):
     #print(info)
     if info['layer'] == 1:
       # for i in range (info[layer]):
-          for j in range(len(language)):
+          
+        for j in range(len(language)):
               
-              if language[j] != info['sourse'] and language[j] != info['destination']:
-                  temp1_1 = language[j]
-                  list.append({temp1_1})
-
+            if language[j] != info['sourse'] and language[j] != info['destination']:
+                temp1_1 = language[j]
+                info1 = {}
+                info1['first'] = temp1_1
+                case.append(info1)
+        for i in range(len(case)):
+            first = case[i]['first']
+            result1.append([first])
+        
+#language = ['zh','en','ru','el','pl','pt','th','de']
     elif info['layer'] == 2:
         # for i in range(info[layer]):
+           
             for j in range(len(language)):
 
                 if language[j] != info['destination'] and language[j] != info['sourse']:
@@ -42,7 +51,14 @@ def sample(sourse,destination,layer):
                     for k in range(len(language)):
                         if language[k] != info['destination'] and language[k] != info['sourse'] and language[k] != temp2_1:
                             temp2_2 = language[k]
-                            list.append({temp2_1,temp2_2})
+                            info1 = {} 
+                            info1['first'] = temp2_1
+                            info1['second'] = temp2_2
+                            case.append(info1)
+            for i in range(len(case)):
+                first = case[i]['first']
+                second = case[i]['second']
+                result1.append([first,second])
 
     elif info['layer'] == 3:
         # for i in range(info[layer]):
@@ -55,15 +71,23 @@ def sample(sourse,destination,layer):
                             for l in range(len(language)):
                                 if language[l] != info['destination'] and language[l] != info['sourse'] and language[l] != temp3_1 and language[l] != temp3_2:
                                     temp3_3 = language[l]
-                                    list.append({temp3_1,temp3_2,temp3_3})
-    
+                                    info1 = {}
+                                    info1['first'] = temp3_1
+                                    info1['second'] = temp3_2
+                                    info1['third'] = temp3_3
+                                    case.append(info1)
+            for i in range(len(case)):
+                first = case[i]['first']
+                second = case[i]['second']
+                third = case[i]['third']
+                result1.append([first,second,third])
 
     else:
         print("蜕变层数错误请重新检查!")
 
 
     #print(list)
-    return list
+    return result1
 
 #蜕变关系
 def transform(content,target,sourse,destination,transform_relationship,layer):
@@ -73,16 +97,19 @@ def transform(content,target,sourse,destination,transform_relationship,layer):
 
     result = sample(sourse,destination,layer)#获取蜕变测试用例
     #翻译
+    print(result)
+
     for tmp in result:
         #将字典转化为列表
-        tmp = list(tmp)
         print(tmp[0])
+        #翻译成中间语言
         content_m = translate(content,sourse,tmp[0],transform_relationship)
         print(content_m)
         i = 0
         for i in range(1,len(tmp)):
             content_m = translate(content_m,tmp[i-1],tmp[i],transform_relationship)
-        content_m = translate(content_m,tmp[i],destination,transform_relationship)
+        #翻译成目标语言
+        content_m = translate(content_m,tmp[i],destination,target)
         translateresult.append(content_m)
 
     print(translateresult)
@@ -99,15 +126,47 @@ def translate(content,sourse,destination,tool):
         result = tr.translate_google(content,sourse,destination)
     return result
 
-def analyse():#结果对比分析
+#调用蜕变关系进行翻译，而后进行结果对比
+def analyse(content,target,sourse,destination,transform_relationship,layer):#结果对比分析
+    result = transform(content,target,sourse,destination,transform_relationship,layer)
+    for i in range(1,len(result)):
+        print("第%d个测试用例:"%i)
+        si.callfunction(result[0],result[i])
     return 
 
+#读取文件测试用例
+def example(path):
+    fo = open(path,"r+",encoding='utf-8')
+    test = []
+    while 1:
+      line = fo.readline()
+      if not line:
+           break
+      else:
+          #sample(list[2],list[3],list[5])
+          line = line.strip('\n')
+          test.append(line)
+    fo.close()
+    return test
+
+
 if __name__ =='__main__':
-    content = "我喜欢你" #翻译内容
     sourse = 'zh' #源语言
     destination = 'en' #目标语言
     target = 'baidu' #测试系统
-    transform_relationship = 'baidu' #蜕变关系
-    layer = 2 #蜕变层数
-    transform(content,target,sourse,destination,transform_relationship,layer)
-
+    transform_relationship = 'google' #蜕变关系
+    layer = 1 #蜕变层数
+    #transform(content,target,sourse,destination,transform_relationship,layer)
+    #print(content)
+    flag = 1
+    if flag == 1:#用户直接输入翻译内容
+        content = '我喜欢你' #翻译内容
+        analyse(content,target,sourse,destination,transform_relationship,layer)
+    elif flag == 2:#用户输入文件
+        path = 'example.txt'
+        test = example(path)
+    #print(sample)
+        for i in range(len(test)):
+            print(test[i])
+            content = test[i]
+            analyse(content,target,sourse,destination,transform_relationship,layer)
