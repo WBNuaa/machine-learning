@@ -86,7 +86,7 @@ def callfunction(s1,s2):
     #print("TFDF:%f"%tfdf)
     info['TFDF'] = tfdf
     if (dis>=0.95 and jacc>=0.95 and tf>=0.95 and tfdf >=0.95):
-        result = '测试通过'.
+        result = '测试通过'
     else:
         result = '测试不通过'
     info['结果'] = result
